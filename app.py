@@ -14,7 +14,7 @@ if "last_identified" not in st.session_state:
     st.session_state.last_identified = None
 
 
-API_KEY = "AIzaSyAdyB7i4UyXyiNge4s3JMJdRTGA7FPE8Xw" 
+API_KEY = st.secrets["API_KEY"]
 genai.configure(api_key=API_KEY)
 
 SYSTEM_INSTRUCTION = """
