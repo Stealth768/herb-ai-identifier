@@ -60,19 +60,30 @@ def get_all_library_files():
 def get_web_images(herb_name):
     try:
         with DDGS() as ddgs:
-            results = ddgs.images(f"{herb_name} medicinal plant botanical", max_results=3)
+        
+            search_query = f"{herb_name} plant ayurveda unani"
+            results = ddgs.images(search_query, max_results=3)
             return [r['image'] for r in results]
-    except:
+    except Exception as e:
+        print(f"Search Error: {e}")
         return []
-
 
 st.set_page_config(page_title="Herb-AI Master", layout="wide")
 
 st.markdown("""
     <style>
-    .main { background-color: #f4f7f6; }
-    .report-card { background-color: white; padding: 20px; border-radius: 12px; border-left: 6px solid #1b5e20; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .lib-card { background-color: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 5px; border: 1px solid #c8e6c9; }
+     .report-card { 
+        background-color: #000000 !important; 
+        color: #ffffff !important;          
+        padding: 20px; 
+        border-radius: 12px; 
+        border-left: 6px solid #2e7d32;      
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    
+    .report-card h3, .report-card b, .report-card p {
+        color: #ffffff !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -132,15 +143,35 @@ with tab_scan:
 
     with col_dash:
         st.subheader(" Diagnostic View")
+        
+       
         if st.session_state.last_identified:
             name = st.session_state.last_identified
-            st.markdown(f"<div class='report-card'><b>Current Specimen:</b><br>{name}</div>", unsafe_allow_html=True)
             
-            st.write("####  Field References")
-            urls = get_web_images(name)
-            if urls:
-                for url in urls:
-                    st.image(url, use_container_width=True)
+           
+            st.markdown(f"""
+                <div class='report-card'>
+                    <small>SPECIMEN IDENTIFIED</small><br>
+                    <b style='font-size: 24px;'>{name}</b>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            st.divider()
+            
+           
+            st.write("####  Visual Reference")
+            
+            
+            with st.spinner(f"Fetching images for {name}..."):
+                urls = get_web_images(name)
+                
+                if urls:
+                   
+                    for url in urls:
+                        st.image(url, caption=f"Reference: {name}", use_container_width=True)
+                else:
+                    
+                    st.warning("No live photos found. Try a more common name.")
 
 with tab_library:
     st.subheader("Library Index")
