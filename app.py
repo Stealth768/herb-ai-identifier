@@ -60,9 +60,16 @@ def get_all_library_files():
 def get_web_images(herb_name):
     try:
         with DDGS() as ddgs:
-        
-            search_query = f"{herb_name} plant ayurveda unani"
-            results = ddgs.images(search_query, max_results=3)
+            
+            search_query = f"{herb_name} plant leaf nature photography ayurveda"
+            
+            
+            results = ddgs.images(
+                search_query, 
+                max_results=3,
+                size="Medium", 
+                type_image="photo" 
+            )
             return [r['image'] for r in results]
     except Exception as e:
         print(f"Search Error: {e}")
@@ -182,8 +189,8 @@ with tab_library:
     if library_files:
         
         for item in library_files:
-            with st.expander(f"📄 {item['Herb Name']}"):
-                content = get_local_knowledge(item['Herb Name'])
-                st.text_area("File Content", value=content, height=150, disabled=True)
+          with st.expander(f"📄 {item['Herb Name']}"):
+           content = get_local_knowledge(item['Herb Name'])
+           st.text_area("File Content", value=content, height=150, disabled=True, key=f"text_{item['File Name']}")
     else:
         st.warning("⚠️ No .txt files found in `data/knowledge_base/`.")
